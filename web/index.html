@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="HERESY-API offline joke calculator and protocol ceremony museum.">
+  <title>HERESY API Calculator</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <p class="eyebrow">QSOL-IMC SOFTWARE HERESY DIVISION</p>
+      <h1>HERESY API Calculator</h1>
+      <p class="lede">Do tiny arithmetic through an interface architecture wildly disproportionate to the task.</p>
+      <p class="offline-badge">OFFLINE CAPABLE · NO BACKEND · NO API KEY FOR DAVE TO LOSE</p>
+    </header>
+
+    <section class="panel calculator" aria-labelledby="calculator-title">
+      <div class="panel-heading">
+        <h2 id="calculator-title">1. Specify the dangerous mathematics</h2>
+        <span class="status-light" aria-hidden="true"></span>
+      </div>
+
+      <form id="calculator-form">
+        <div class="equation-grid">
+          <label>
+            <span>Left operand</span>
+            <input id="left" name="left" type="number" inputmode="numeric" min="-2147483648" max="2147483647" step="1" value="2" required>
+          </label>
+
+          <label>
+            <span>Operation</span>
+            <select id="operation" name="operation">
+              <option value="add">+ Add</option>
+              <option value="subtract">- Subtract</option>
+              <option value="multiply">× Multiply</option>
+              <option value="divide">÷ Divide</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Right operand</span>
+            <input id="right" name="right" type="number" inputmode="numeric" min="-2147483648" max="2147483647" step="1" value="2" required>
+          </label>
+        </div>
+
+        <label class="style-picker">
+          <span>Unnecessarily elaborate interface style</span>
+          <select id="style" name="style"></select>
+        </label>
+
+        <button type="submit">COMMIT ENTERPRISE ARITHMETIC</button>
+      </form>
+
+      <p id="error" class="error" role="alert" hidden></p>
+    </section>
+
+    <section class="panel verdict" aria-labelledby="verdict-title">
+      <div class="panel-heading">
+        <h2 id="verdict-title">2. Receive the architecture</h2>
+        <span id="era" class="era"></span>
+      </div>
+
+      <div class="result-strip">
+        <div>
+          <span class="metric-label">Mathematics</span>
+          <strong id="result">4</strong>
+        </div>
+        <div>
+          <span class="metric-label">Useful intent</span>
+          <strong id="intent">ADD 2 2</strong>
+        </div>
+        <div>
+          <span class="metric-label">Interface</span>
+          <strong id="style-name">Punch Card / Fixed Width</strong>
+        </div>
+      </div>
+
+      <div class="metrics" aria-label="Ceremony metrics">
+        <article>
+          <span class="metric-label">Useful bytes</span>
+          <strong id="useful-bytes">7</strong>
+        </article>
+        <article>
+          <span class="metric-label">Payload bytes</span>
+          <strong id="payload-bytes">80</strong>
+        </article>
+        <article>
+          <span class="metric-label">Approx. tokens</span>
+          <strong id="tokens">20</strong>
+        </article>
+        <article>
+          <span class="metric-label">Ceremony Ratio</span>
+          <strong id="ceremony-ratio">11.43×</strong>
+        </article>
+      </div>
+
+      <div class="wire-block">
+        <div class="wire-heading">
+          <span>FAKE WIRE REPRESENTATION</span>
+          <span id="ceremony-bytes">+73 ceremony bytes</span>
+        </div>
+        <pre id="payload" tabindex="0"></pre>
+      </div>
+
+      <div class="curatorial-grid">
+        <article>
+          <h3>Punchline</h3>
+          <p id="punchline"></p>
+        </article>
+        <article>
+          <h3>What the ceremony buys</h3>
+          <p id="value-purchased"></p>
+        </article>
+        <article>
+          <h3>Engineering caveat</h3>
+          <p id="caveat"></p>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel authentication" aria-labelledby="auth-title">
+      <div class="panel-heading">
+        <h2 id="auth-title">3. Modern authentication ceremony</h2>
+      </div>
+      <dl>
+        <div><dt>API key status</dt><dd id="api-key-status">NOT REQUIRED</dd></div>
+        <div><dt>Authentication status</dt><dd id="auth-status">NOT APPLICABLE</dd></div>
+        <div><dt>Recommended remediation</dt><dd id="remediation">continue offending the abstraction layer</dd></div>
+      </dl>
+      <p class="lifecycle">provision → store safely → forget where → search .env variants → find somewhere unsafe → rotate → 401 → consider magnetic tape</p>
+    </section>
+
+    <footer>
+      <p><strong>Measurement caveat:</strong> payload accounting is application-level theatre. Approximate tokens are <code>ceil(bytes / 4)</code>, not a real tokenizer or billing estimator.</p>
+      <p>GitHub Pages is merely the display case. This file works directly from disk because the calculator has no network dependency.</p>
+    </footer>
+  </main>
+
+  <script src="./heresy-core.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

@@ -48,12 +48,21 @@ The latter requires a different repository and considerably more insurance.
 
 ## 4. Ceremony Ratio
 
-For the canonical exhibit:
+For any Time Machine request:
 
 ```text
-canonical useful intent = b"ADD 2 2"
-ceremony ratio = transmitted payload bytes / 7
+useful intent bytes = len(ASCII semantic intent)
+ceremony ratio = application payload bytes / useful intent bytes
 ```
+
+The canonical exhibit remains:
+
+```text
+useful intent = b"ADD 2 2"
+useful intent bytes = 7
+```
+
+Custom operands change the useful-intent byte count, so the denominator follows the actual semantic request rather than pretending every journey is seven bytes.
 
 The metric is intentionally local to the artwork. It does not model latency, reliability, discoverability, compatibility, security, tooling, maintenance, versioning, observability, developer experience, or total system cost.
 
@@ -64,14 +73,34 @@ Those omissions are not bugs in the joke. They are why the joke is not a benchma
 Until a specific tokenizer is intentionally integrated, HERESY-API uses:
 
 ```text
-estimated tokens = ceil(UTF-8 payload bytes / 4)
+estimated tokens = ceil(application payload bytes / 4)
 ```
 
 Every surface displaying this value must identify it as crude or approximate.
 
 Do not present it as the output of GPT, Claude, Gemini, Llama, or any other tokenizer.
 
-## 6. The invariant
+## 6. Time Machine invariants
+
+Every exhibit in one journey must bind to the same semantic intent.
+
+Every exhibit must expose:
+
+- useful semantic intent;
+- application payload bytes;
+- approximate token count;
+- Ceremony Ratio;
+- protocol-specific punchline;
+- what the ceremony is buying;
+- an engineering caveat.
+
+If an exhibit is illustrative rather than byte-accurate to a named historical wire protocol, it must say so.
+
+Build-time artifacts must not be quietly counted as per-request wire bytes. In particular, CORBA IDL may be mocked as bureaucracy, but the museum must state that IDL is normally a build-time contract.
+
+Modern authenticated exhibits may joke about lost keys only with obviously synthetic placeholders. Never put a real credential in the museum.
+
+## 7. The invariant
 
 Every future exhibit should preserve this contrast:
 

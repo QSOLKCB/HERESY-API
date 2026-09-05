@@ -25,6 +25,23 @@ class HeresyMuseumTests(unittest.TestCase):
             exhibits["REST-ish JSON"].payload_bytes,
         )
 
+    def test_rest_exhibit_is_validly_framed_http_11(self) -> None:
+        exhibits = {exhibit.name: exhibit for exhibit in heresy.build_exhibits()}
+        payload = exhibits["REST-ish JSON"].payload
+        headers, body = payload.split(b"\r\n\r\n", 1)
+        header_lines = headers.split(b"\r\n")
+
+        self.assertEqual(header_lines[0], b"POST /v1/arithmetic/add HTTP/1.1")
+        self.assertIn(b"Host: example.invalid", header_lines)
+        content_length = next(
+            line for line in header_lines if line.startswith(b"Content-Length: ")
+        )
+        self.assertEqual(int(content_length.split(b": ", 1)[1]), len(body))
+        self.assertEqual(
+            json.loads(body.decode("utf-8")),
+            {"operation": "add", "arguments": {"a": 2, "b": 2}},
+        )
+
     def test_agent_tool_call_contains_schema_ceremony(self) -> None:
         exhibits = {exhibit.name: exhibit for exhibit in heresy.build_exhibits()}
         payload = json.loads(exhibits["Agent Tool Call"].payload.decode("utf-8"))
@@ -46,6 +63,13 @@ class HeresyMuseumTests(unittest.TestCase):
         self.assertIn("intentionally crude", rendered)
         self.assertIn("CEREMONY", rendered)
         self.assertIn("CURATORIAL NOTES", rendered)
+
+    def test_empty_museum_still_renders_headings_and_notes(self) -> None:
+        rendered = heresy.render_table([])
+        self.assertIn("EXHIBIT", rendered)
+        self.assertIn("ERA / STYLE", rendered)
+        self.assertIn("CURATORIAL NOTES", rendered)
+        self.assertIn("THE OLD-SCHOOL DEFENSE", rendered)
 
     def test_old_school_defense_is_explicitly_conditional(self) -> None:
         rendered = heresy.render_table(heresy.build_exhibits())

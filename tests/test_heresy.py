@@ -47,6 +47,20 @@ class HeresyMuseumTests(unittest.TestCase):
         self.assertIn("CEREMONY", rendered)
         self.assertIn("CURATORIAL NOTES", rendered)
 
+    def test_old_school_defense_is_explicitly_conditional(self) -> None:
+        rendered = heresy.render_table(heresy.build_exhibits())
+        self.assertIn("THE OLD-SCHOOL DEFENSE", rendered)
+        self.assertIn("TCP:", rendered)
+        self.assertIn("UDP:", rendered)
+        self.assertIn("FTP / batch files:", rendered)
+        self.assertIn("Price:", rendered)
+
+    def test_api_key_loss_is_part_of_the_museum(self) -> None:
+        rendered = heresy.render_table(heresy.build_exhibits())
+        self.assertIn("Forget which .env", rendered)
+        self.assertIn("Receive HTTP 401", rendered)
+        self.assertIn("Consider magnetic tape", rendered)
+
 
 if __name__ == "__main__":
     unittest.main()

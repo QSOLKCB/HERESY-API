@@ -136,6 +136,17 @@
     return parsed;
   }
 
+  function greatestCommonDivisor(left, right) {
+    let a = left < 0n ? -left : left;
+    let b = right < 0n ? -right : right;
+    while (b !== 0n) {
+      const remainder = a % b;
+      a = b;
+      b = remainder;
+    }
+    return a;
+  }
+
   function exactResult(left, right, operation) {
     if (operation.slug === "add") return (left + right).toString();
     if (operation.slug === "subtract") return (left - right).toString();
@@ -148,6 +159,9 @@
       numerator = -numerator;
       denominator = -denominator;
     }
+    const divisor = greatestCommonDivisor(numerator, denominator);
+    numerator /= divisor;
+    denominator /= divisor;
     return numerator.toString() + "/" + denominator.toString();
   }
 

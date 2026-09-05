@@ -23,6 +23,20 @@ class HeresyTimeMachineTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             heresy.Intent(0, -(2**31) - 1)
 
+    def test_punch_card_fields_cover_full_signed_int32_range(self) -> None:
+        for intent in (
+            heresy.Intent(heresy.INT32_MAX, heresy.INT32_MAX),
+            heresy.Intent(heresy.INT32_MIN, heresy.INT32_MIN),
+        ):
+            exhibit = next(
+                item for item in heresy.build_exhibits(intent) if item.slug == "punch-card"
+            )
+            record = exhibit.payload.decode("ascii")
+            self.assertEqual(len(record), 80)
+            self.assertEqual(record[:8].strip(), "ADD")
+            self.assertEqual(record[8:19].strip(), str(intent.left))
+            self.assertEqual(record[19:30].strip(), str(intent.right))
+
     def test_time_machine_contains_every_roadmap_exhibit(self) -> None:
         slugs = [exhibit.slug for exhibit in heresy.build_exhibits()]
         self.assertEqual(
@@ -94,6 +108,17 @@ class HeresyTimeMachineTests(unittest.TestCase):
         self.assertEqual([item.slug for item in modern], ["rest", "graphql", "agent-tool"])
         self.assertTrue(all("401" in item.auth_status for item in modern))
         self.assertEqual(heresy.API_KEY_LIFECYCLE[-1], "consider magnetic tape")
+
+    def test_agent_tool_schema_matches_signed_int32_contract(self) -> None:
+        exhibit = next(
+            item for item in heresy.build_exhibits() if item.slug == "agent-tool"
+        )
+        payload = json.loads(exhibit.payload.decode("utf-8"))
+        properties = payload["tool"]["input_schema"]["properties"]
+        for name in ("a", "b"):
+            self.assertEqual(properties[name]["type"], "integer")
+            self.assertEqual(properties[name]["minimum"], heresy.INT32_MIN)
+            self.assertEqual(properties[name]["maximum"], heresy.INT32_MAX)
 
     def test_style_selection_preserves_timeline_order(self) -> None:
         exhibits = heresy.build_exhibits()

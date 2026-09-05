@@ -31,9 +31,12 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Validate museum
+      - name: Validate Time Machine
         run: |
           python -m compileall -q heresy.py tests
           python -m unittest discover -s tests -v
           python heresy.py >/dev/null
-          python heresy.py --json >/dev/null
+          python heresy.py --details >/dev/null
+          python heresy.py --left 17 --right -3 --style udp --json >/dev/null
+          python heresy.py --list-styles >/dev/null
+          python heresy.py --old-school-defense >/dev/null

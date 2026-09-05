@@ -4,6 +4,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 WEB = ROOT / "web"
+PAGES_URL = "https://qsolkcb.github.io/HERESY-API/"
 
 
 class OfflineCalculatorTests(unittest.TestCase):
@@ -40,10 +41,17 @@ class OfflineCalculatorTests(unittest.TestCase):
             'id="api-key-status"',
             'id="auth-status"',
             "NO API KEY FOR DAVE TO LOSE",
+            "Nothing executes until enterprise arithmetic is committed",
         ):
             self.assertIn(marker, index)
         self.assertIn('authenticationStatus: authenticated ? "401"', core)
         self.assertIn('remediation: authenticated ? "rewind tape"', core)
+
+    def test_readme_links_live_pages_calculator(self) -> None:
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertIn(PAGES_URL, readme)
+        self.assertIn("COMMIT ENTERPRISE ARITHMETIC", readme)
+        self.assertIn("stages", readme)
 
     def test_pages_workflow_publishes_only_static_web_directory(self) -> None:
         workflow = (ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")

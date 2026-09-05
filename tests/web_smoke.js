@@ -34,6 +34,11 @@ for (const name of ["a", "b"]) {
 
 assert.strictEqual(core.evaluate("6", "3", "divide", "rpc").result, "2");
 assert.strictEqual(core.evaluate("1", "3", "divide", "rpc").result, "1/3");
+assert.strictEqual(core.evaluate("2", "4", "divide", "rpc").result, "1/2");
+assert.strictEqual(core.evaluate("-2", "4", "divide", "rpc").result, "-1/2");
+assert.strictEqual(core.evaluate("2", "-4", "divide", "rpc").result, "-1/2");
+assert.strictEqual(core.evaluate("-2", "-4", "divide", "rpc").result, "1/2");
+assert.strictEqual(core.evaluate("6", "-4", "divide", "rpc").result, "-3/2");
 assert.strictEqual(core.evaluate("-1", "-3", "divide", "rpc").result, "1/3");
 assert.throws(() => core.evaluate("1", "0", "divide", "rpc"), /architecture committee/);
 assert.throws(() => core.parseInt32("2147483648", "operand"), /between/);

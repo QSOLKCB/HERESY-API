@@ -144,7 +144,7 @@ def _http_request(path: str, body: bytes, *, content_type: str) -> bytes:
 
 
 def _fixed_record(intent: Intent) -> bytes:
-    return f"{'ADD':<8}{intent.left:>8}{intent.right:>8}".ljust(80).encode("ascii")
+    return f"{'ADD':<8}{intent.left:>11}{intent.right:>11}".ljust(80).encode("ascii")
 
 
 def _binary_operands(intent: Intent) -> bytes:
@@ -218,10 +218,14 @@ def build_exhibits(intent: Intent | None = None) -> tuple[Exhibit, ...]:
                     "properties": {
                         "a": {
                             "type": "integer",
+                            "minimum": INT32_MIN,
+                            "maximum": INT32_MAX,
                             "description": "First signed 32-bit integer operand.",
                         },
                         "b": {
                             "type": "integer",
+                            "minimum": INT32_MIN,
+                            "maximum": INT32_MAX,
                             "description": "Second signed 32-bit integer operand.",
                         },
                     },

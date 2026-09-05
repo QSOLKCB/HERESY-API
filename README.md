@@ -4,41 +4,97 @@
 
 HERESY-API asks a deeply irresponsible question:
 
-**What if we judged modern API ceremony by making it compete with punch cards, magnetic tape, fixed-width files, raw sockets, and other historical monsters?**
+**What if modern API ceremony had to justify itself in a museum beside punch cards, magnetic tape, raw TCP frames, UDP datagrams, batch files, CORBA, SOAP, JSON, GraphQL, and agent tool schemas?**
 
-The project is not an argument that punch cards were better. They were not. It is an argument that every abstraction should occasionally be dragged into a fluorescent-lit basement and asked to justify its byte count.
+The answer is the **API Time Machine**.
 
-## The canonical scientific experiment
+## API Time Machine
 
-We need a computer to perform the advanced distributed-systems workload:
+The default experiment remains magnificently difficult:
 
 ```text
 ADD 2 2
 ```
 
-HERESY-API expresses that same tiny intent through increasingly ceremonial interfaces and measures the resulting application-level payload.
+Run the full timeline:
 
 ```bash
 python3 heresy.py
 ```
 
-You will receive a **Ceremony Ratio**: exhibit payload bytes divided by the seven bytes of useful canonical intent.
+Every stop receives the same useful semantic intent and reports:
 
-The token estimate is deliberately crude (`ceil(UTF-8 bytes / 4)`). It is a joke-meter, not a tokenizer, benchmark, protocol-efficiency paper, or invoice predictor.
+- useful semantic intent
+- application payload bytes
+- deliberately crude approximate token count
+- Ceremony Ratio
+- protocol-specific punchline
+- what the additional ceremony actually buys
+- an honest engineering caveat
+- authentication status where Dave has been entrusted with an API key
 
-## Current exhibits
+Example custom journey:
 
-| Exhibit | Era / style | Curatorial interpretation |
+```bash
+python3 heresy.py --left 17 --right -3 --details
+```
+
+Jump directly to one or more eras:
+
+```bash
+python3 heresy.py --style udp --details
+python3 heresy.py --style punch-card --style soap --style agent-tool
+```
+
+Discover the available style slugs:
+
+```bash
+python3 heresy.py --list-styles
+```
+
+Produce machine-readable metadata about our joke about machine-readable metadata:
+
+```bash
+python3 heresy.py --left 10 --right -7 --style graphql --json
+```
+
+The operands are intentionally restricted to signed 32-bit integers so the binary TCP/UDP exhibits remain deterministic and structurally comparable.
+
+## Current timeline
+
+| Stop | Era / style | Curatorial interpretation |
 | --- | --- | --- |
-| Punch Card | 1940s-1960s | Uses 80 columns because storage had furniture. |
-| Magnetic Tape | 1950s-1980s | Sequential access. Please rewind your microservice. |
-| Raw Socket | 1970s-1980s | Nine application bytes. Documentation: `good luck`. |
-| FTP Batch | 1970s-1990s | Real-time, provided your definition of real-time includes tomorrow morning. |
-| RPC-ish | 1980s-1990s | Pretends the network is a function call until the network remembers it is a network. |
-| SOAP-ish | 1990s-2000s | The request has entered the XML cathedral. |
-| REST-ish JSON | modern web | Human-readable bureaucracy. Authentication pending: Dave lost the API key again. |
-| GraphQL-ish | modern web | Ask precisely for what you need, after introducing yourself to the syntax tree. |
-| Agent Tool Call | current AI stack | Seven useful bytes escorted by a schema, description, arguments, and several responsible adults. |
+| Punch Card / Fixed Width | 1940s-1960s | 80 columns because storage used to arrive with furniture. |
+| Magnetic Tape Record | 1950s-1980s | Sequential access. Please rewind your microservice. |
+| Raw TCP-style Frame | 1970s-1980s | Length prefix, opcode, two int32s. The documentation has become frighteningly short. |
+| UDP-style Datagram | 1970s-1980s | The packet can simply leave. No architecture review calendar invite required. |
+| FTP / Batch File | 1970s-1990s | Real-time, if tomorrow morning counts as a latency target. |
+| RPC-ish Invocation | 1980s-1990s | The network is local until packet loss files an objection. |
+| CORBA / IDL Theatre | 1990s | The addition has been referred to the Object Request Broker. |
+| SOAP-ish XML | late 1990s-2000s | The integer has entered the XML cathedral and acquired a namespace. |
+| REST-ish HTTP + JSON | modern web | Human-readable bureaucracy. Dave has lost the API key again. |
+| GraphQL-ish HTTP | modern web | Ask precisely for what you need after introducing yourself to the syntax tree. |
+| Agent Tool Call | current AI stack | Tiny arithmetic escorted by a schema and several responsible adults. |
+
+## Ceremony Ratio
+
+For any Time Machine request:
+
+```text
+Ceremony Ratio = application payload bytes / useful semantic intent bytes
+```
+
+For the canonical `ADD 2 2`, useful intent is seven ASCII bytes.
+
+The approximate token meter remains deliberately crude:
+
+```text
+estimated tokens = ceil(application payload bytes / 4)
+```
+
+It is a joke-meter, not a tokenizer, benchmark, protocol-efficiency paper, or invoice predictor.
+
+Network headers, TLS, Ethernet, filesystem overhead, physical-media overhead, server implementation cost, latency, reliability, maintenance, observability, governance, and all the other things capable of ruining a simple chart are intentionally outside this metric.
 
 ## The Heresies
 
@@ -47,87 +103,85 @@ The token estimate is deliberately crude (`ceil(UTF-8 bytes / 4)`). It is a joke
 3. **A schema can prevent chaos and still become baroque. Both things can be true.**
 4. **Tokens are a computational resource, not decorative confetti.**
 5. **Human-readable does not automatically mean machine-efficient.**
-6. **If `ADD 2 2` needs three abstraction layers, the punch-card operator is allowed one smug cigarette break.**
-7. **The worst historical interface can still make a useful punchline about the present one.**
+6. **If `ADD 2 2` needs three abstraction layers, the punch-card operator gets one smug cigarette break.**
+7. **An old mechanism can be unsuitable for modern production and still make a devastating comparison at a deliberately tiny scale.**
 8. **An API key stored safely is apparently indistinguishable from an API key lost forever.**
+9. **If an abstraction adds bytes, the Time Machine is allowed to ask what those bytes purchased.**
 
 ## Why the heretics occasionally have a point
 
-This is where the joke gets annoyingly defensible.
-
 ### TCP
 
-TCP gives you an ordered, reliable byte stream. If both ends are under your control, you can put a tiny binary or fixed-width protocol directly on that stream instead of wrapping every request in HTTP headers, JSON field names, versioned routes, content negotiation, and whatever else followed the architecture astronaut into the meeting.
+TCP gives an ordered, reliable byte stream. When both ends are controlled and the message set is tiny, a compact framed binary protocol can avoid repeatedly shipping field names, route names, content negotiation, and text envelopes.
 
-Long-lived TCP connections can also keep application chatter compact once framing is established.
+**Heresy:** sometimes the protocol really can be `length + opcode + two int32s`.
 
-**Heresy:** sometimes the shortest API documentation really can be `opcode 0x01 + two int32s`.
-
-**Reality check:** TCP only gives you the stream. Message framing, authentication, versioning, schema evolution, observability, security, retries above the stream, and not ruining production remain your problem.
+**Reality check:** TCP gives a stream, not a complete distributed-system design. Framing, authentication, versioning, schema evolution, observability, timeouts, retries above the stream, and not setting production on fire remain your problem.
 
 ### UDP
 
-UDP preserves datagram boundaries and has no transport-level connection handshake. That makes it attractive for workloads where sending the newest state quickly matters more than waiting to recover stale state, such as some telemetry, real-time media, games, discovery, and tightly controlled protocols.
+UDP preserves datagram boundaries and avoids a transport-level connection handshake. That can suit workloads where newest-state freshness matters more than recovering stale data.
 
-**Heresy:** the packet can simply leave. It does not need a meeting invite.
+**Heresy:** the packet can simply leave.
 
-**Reality check:** delivery, ordering, retransmission, authentication, congestion behavior, and application semantics may need to be supplied elsewhere. Small is not the same thing as complete.
+**Reality check:** delivery, ordering, retransmission, authentication, congestion behavior, and application semantics may need to be provided elsewhere. Small is not synonymous with complete.
 
 ### FTP and batch files
 
-For the ancient business requirement **MOVE THIS FILE OVER THERE**, a file-transfer workflow can be beautifully literal. Files are easy to inspect, archive, checksum, retry, replay, process asynchronously, and hand to another tool without first inventing a resource model for them.
+For **MOVE THIS FILE OVER THERE**, a durable file can be wonderfully literal: inspectable, archivable, replayable, checksum-friendly, asynchronously processable, and easy to hand to another tool.
 
-That is why batch exchange refuses to die in finance, science, industry, and enterprise integration. Sometimes a durable file is the interface.
+**Heresy:** yesterday's `results.dat` does not necessarily need twelve endpoints and an SDK.
 
-**Heresy:** yesterday's `results.dat` does not need twelve endpoints and an SDK.
+**Reality check:** plain FTP is unencrypted. Secure deployments need an appropriate protected alternative, and batch exchange is a poor fit when low latency is actually required.
 
-**Reality check:** plain FTP does not encrypt credentials or data. Secure deployments need an appropriate protected alternative or tunnel, and batch transfer is obviously a poor fit when low latency is actually required.
+## CORBA honesty clause
+
+The CORBA stop is deliberately **GIOP-ish theatre**, not a byte-accurate packet capture. IDL is normally a build-time interface contract and is not resent on every call.
+
+That caveat is part of the joke's constitution: HERESY-API may exaggerate bureaucracy, but it does not get to falsify where the bureaucracy lives.
 
 ## Modern authentication ceremony
 
-A typical contemporary integration lifecycle:
+Modern authenticated stops retain the canonical lifecycle:
 
 ```text
-1. Put API key in .env
-2. Forget which .env
-3. Search .env.local, .env.old, .env.backup and notes-final-FINAL.txt
-4. Find key in shell history
-5. Rotate key because finding it in shell history is bad
-6. Update every service except the one that matters
-7. Receive HTTP 401
-8. Consider magnetic tape
+provision
+-> store safely
+-> forget where
+-> search .env variants
+-> find somewhere unsafe
+-> rotate
+-> 401
+-> consider magnetic tape
 ```
 
-Punch-card authentication had one underrated property: **if you lost the credential, it was probably underneath the desk and remained visible to the naked eye.**
+The synthetic key marker is:
 
-## What this project is actually making fun of
+```text
+LOST-IN-.env.old.backup.final2
+```
 
-The target is not REST, GraphQL, SOAP, RPC, JSON, XML, LLM tooling, or API designers individually. All of those exist for reasons.
+It is not a secret. It is a cry for help.
 
-The target is **ceremony without proportional value**: duplicated metadata, compulsive envelopes, needless verbosity, abstraction piled onto abstraction, token-heavy machine-to-machine chatter, and interfaces that spend more effort describing the request than expressing it.
+## Old-school defense mode
 
-That distinction matters. Satire is much funnier when it knows what the engineering trade-off actually was.
+For the technically annoying version of the joke:
 
-## Sequenced roadmap
+```bash
+python3 heresy.py --old-school-defense
+```
 
-The next two acts are now pinned in [`ROADMAP.md`](ROADMAP.md):
+This prints the narrow cases for TCP, UDP, and batch files together with the bill each one leaves on the table.
 
-- **PR #2 — API TIME MACHINE:** make the same tiny operation travel through historical and modern interface styles while the abstraction tax accumulates in public.
-- **PR #3 — HERESY API CALCULATOR:** an offline-first HTML/CSS/JavaScript joke calculator, published through GitHub Pages but fully usable from local disk. No backend, no runtime framework, no external API, and therefore no API key for Dave to lose.
+## Project sequence
 
-GitHub Pages is only the display case. The PR #3 app must remain a genuinely static offline-capable artifact.
+See [`ROADMAP.md`](ROADMAP.md).
 
-## Planned gallery wings
+- **PR #1 — Protocol Museum:** foundation, curatorial rules, metrics, and first exhibits.
+- **PR #2 — API Time Machine:** dynamic operands, full historical timeline, filtering, detailed dossiers, engineering value/caveats, UDP, CORBA, and persistent API-key tragedy.
+- **PR #3 — HERESY API CALCULATOR:** offline-first plain HTML/CSS/JavaScript calculator distributed through GitHub Pages, with no backend and therefore no API key for Dave to lose.
 
-- **PUNCHCARD/1.0**: emit an actual 80-column card image for requests.
-- **TAPE/1.0**: append-only virtual tape with rewind latency theatre.
-- **FTP-MIDNIGHT**: request now, response after the batch window, because immediacy is a lifestyle choice.
-- **CORBA CATHEDRAL**: generate enough IDL to make `ADD` require organizational governance.
-- **SOAP APOCALYPSE**: wrap a one-digit answer in progressively more XML until the answer develops namespaces.
-- **TOKEN TRIBUNAL**: compare useful semantic content with wire-format ceremony.
-- **API TIME MACHINE**: solve the same task using each historical interface and graph the abstraction tax.
-- **NO-API MODE**: write the answer to a file and physically instruct the user to carry it to the other computer.
-- **KEY LOST AGAIN**: benchmark mean time between provisioning an API key and forgetting where it went.
+GitHub Pages will be the display case, not a runtime dependency.
 
 ## Run the tests
 
@@ -139,11 +193,11 @@ No runtime dependencies are required.
 
 ## Important lack of seriousness
 
-HERESY-API is software art and technical satire. The payload comparisons are intentionally theatrical and are **not** claims that older mechanisms are generally superior, safer, faster, cheaper, or more maintainable than modern APIs.
+HERESY-API is software art and technical satire.
 
-Use modern interfaces where they solve modern problems.
+It does **not** claim that punch cards, tape, raw sockets, FTP, RPC, CORBA, SOAP, REST, GraphQL, or agent tooling are universally better or worse than one another. They solve different problems under different constraints.
 
-Then, occasionally, ask why your integer needed a JSON entourage.
+The artwork simply reserves the right to ask why your integer needed a JSON entourage.
 
 ## License
 

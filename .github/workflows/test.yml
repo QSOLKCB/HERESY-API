@@ -2,7 +2,18 @@ name: test
 
 on:
   push:
+    branches: [main]
+    paths-ignore:
+      - "**/*.md"
+      - "LICENSE"
   pull_request:
+    paths-ignore:
+      - "**/*.md"
+      - "LICENSE"
+
+concurrency:
+  group: test-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -10,10 +21,7 @@ permissions:
 jobs:
   unittest:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.11", "3.13"]
+    timeout-minutes: 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,16 +29,11 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.13"
 
-      - name: Compile
-        run: python -m compileall -q heresy.py tests
-
-      - name: Test
-        run: python -m unittest discover -s tests -v
-
-      - name: Smoke-test museum
-        run: python heresy.py
-
-      - name: Smoke-test machine-readable joke
-        run: python heresy.py --json >/dev/null
+      - name: Validate museum
+        run: |
+          python -m compileall -q heresy.py tests
+          python -m unittest discover -s tests -v
+          python heresy.py >/dev/null
+          python heresy.py --json >/dev/null

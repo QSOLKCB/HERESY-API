@@ -108,6 +108,15 @@ The target is **ceremony without proportional value**: duplicated metadata, comp
 
 That distinction matters. Satire is much funnier when it knows what the engineering trade-off actually was.
 
+## Sequenced roadmap
+
+The next two acts are now pinned in [`ROADMAP.md`](ROADMAP.md):
+
+- **PR #2 — API TIME MACHINE:** make the same tiny operation travel through historical and modern interface styles while the abstraction tax accumulates in public.
+- **PR #3 — HERESY API CALCULATOR:** an offline-first HTML/CSS/JavaScript joke calculator, published through GitHub Pages but fully usable from local disk. No backend, no runtime framework, no external API, and therefore no API key for Dave to lose.
+
+GitHub Pages is only the display case. The PR #3 app must remain a genuinely static offline-capable artifact.
+
 ## Planned gallery wings
 
 - **PUNCHCARD/1.0**: emit an actual 80-column card image for requests.

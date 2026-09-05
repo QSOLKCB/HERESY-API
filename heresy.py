@@ -2,7 +2,8 @@
 """HERESY-API protocol museum.
 
 A dependency-free software-art program that expresses the same tiny intent through
-multiple interface styles and measures the amount of wire-format ceremony involved.
+multiple interface styles and measures the amount of application-level wire-format
+ceremony involved.
 
 This is satire, not a protocol benchmark.
 """
@@ -16,6 +17,28 @@ from math import ceil
 from typing import Iterable
 
 CANONICAL_INTENT = b"ADD 2 2"
+
+TRANSPORT_DEFENSE = (
+    (
+        "TCP",
+        "Ordered, reliable byte stream; lets a tiny custom protocol stay tiny once you "
+        "define its framing. Long-lived connections can avoid rebuilding application "
+        "ceremony for every request. Price: you own the protocol above the stream.",
+    ),
+    (
+        "UDP",
+        "Datagram boundaries, no transport-level connection handshake, and very little "
+        "application ceremony. Excellent when timeliness matters more than retransmitting "
+        "stale data. Price: reliability, ordering, authentication, and congestion behavior "
+        "do not magically appear because the packet was small.",
+    ),
+    (
+        "FTP / batch files",
+        "For the extremely unglamorous job 'move this file over there', a file-transfer "
+        "workflow can be wonderfully literal, scriptable, resumable, inspectable, and easy "
+        "to replay. Price: plain FTP is not encrypted, and batch latency is still batch latency.",
+    ),
+)
 
 
 @dataclass(frozen=True)
@@ -44,7 +67,11 @@ def _json_bytes(value: object) -> bytes:
 
 
 def build_exhibits() -> tuple[Exhibit, ...]:
-    """Return deterministic museum exhibits for the canonical ADD request."""
+    """Return deterministic museum exhibits for the canonical ADD request.
+
+    Payload sizes are application-level exhibit payloads. They intentionally do not
+    include IP, TCP, UDP, Ethernet, TLS, filesystem, or physical-media overhead.
+    """
 
     punch_card = f"{'ADD':<8}{2:>8}{2:>8}".ljust(80).encode("ascii")
     magnetic_tape = b"ADD|00000002|00000002\n"
@@ -134,7 +161,7 @@ def build_exhibits() -> tuple[Exhibit, ...]:
             "REST-ish JSON",
             "modern web",
             rest_json,
-            "At last: human-readable bureaucracy with a correlation ID.",
+            "Human-readable bureaucracy. Authentication pending: Dave has lost the API key again.",
         ),
         Exhibit(
             "GraphQL-ish",
@@ -197,6 +224,7 @@ def render_table(exhibits: Iterable[Exhibit]) -> str:
         "HERESY-API :: PROTOCOL MUSEUM",
         f"Canonical useful intent: {CANONICAL_INTENT.decode('ascii')!r} ({len(CANONICAL_INTENT)} bytes)",
         "Token estimate: ceil(payload bytes / 4), intentionally crude",
+        "Payload accounting: application-level exhibit bytes only",
         "",
         format_row(headings),
         separator,
@@ -206,6 +234,20 @@ def render_table(exhibits: Iterable[Exhibit]) -> str:
     output.append("CURATORIAL NOTES")
     for exhibit in rows:
         output.append(f"- {exhibit.name}: {exhibit.punchline}")
+    output.append("")
+    output.append("THE OLD-SCHOOL DEFENSE")
+    for name, defense in TRANSPORT_DEFENSE:
+        output.append(f"- {name}: {defense}")
+    output.append("")
+    output.append("MODERN AUTHENTICATION CEREMONY")
+    output.append("1. Put API key in .env")
+    output.append("2. Forget which .env")
+    output.append("3. Search .env, .env.local, .env.old, .env.backup, and notes-final-FINAL.txt")
+    output.append("4. Find key in shell history")
+    output.append("5. Rotate key because finding it in shell history is bad")
+    output.append("6. Update three services except the one that matters")
+    output.append("7. Receive HTTP 401")
+    output.append("8. Consider magnetic tape")
     output.append("")
     output.append("Verdict: civilization has many virtues. Payload minimalism is not always one of them.")
     return "\n".join(output)

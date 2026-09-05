@@ -73,15 +73,20 @@ assert.strictEqual(elements.intent.textContent, "");
 assert.strictEqual(elements.payload.textContent, "");
 assert.strictEqual(elements.error.hidden, true);
 
-for (const id of ["left", "right", "operation", "style"]) {
-  assert.strictEqual(elements[id].listeners.change, undefined, id + " unexpectedly recalculates on change");
-}
+// Staged edits may invalidate an old report, but must never calculate a new one.
+assert.ok(elements.left.listeners.input);
+assert.ok(elements.right.listeners.input);
+assert.ok(elements.operation.listeners.change);
+assert.ok(elements.style.listeners.change);
 
-// Changing staged input must not execute until the enterprise commit is submitted.
 elements.left.value = "9";
+elements.left.listeners.input();
 elements.right.value = "4";
+elements.right.listeners.input();
 elements.operation.value = "multiply";
+elements.operation.listeners.change();
 assert.strictEqual(elements.result.textContent, "");
+assert.strictEqual(elements.intent.textContent, "");
 
 let prevented = false;
 elements["calculator-form"].listeners.submit({
@@ -95,9 +100,29 @@ assert.strictEqual(elements.intent.textContent, "MUL 9 4");
 assert.ok(elements.payload.textContent.length > 0);
 assert.strictEqual(elements.error.hidden, true);
 
-// Force a failed calculation after a successful one, again only through submit.
+// Native browser validation may block submit. Input invalidation must still remove
+// the previously committed report before the browser refuses the request.
+elements.right.value = "";
+elements.right.listeners.input();
+assert.strictEqual(elements.result.textContent, "");
+assert.strictEqual(elements.intent.textContent, "");
+assert.strictEqual(elements.payload.textContent, "");
+assert.strictEqual(elements.error.hidden, true);
+
+// Restore a valid staged request and commit it again.
+elements.right.value = "4";
+elements.right.listeners.input();
+elements.operation.value = "multiply";
+elements.operation.listeners.change();
+elements["calculator-form"].listeners.submit({ preventDefault() {} });
+assert.strictEqual(elements.result.textContent, "36");
+
+// Force a calculation failure after a successful one, through submit.
 elements.operation.value = "divide";
+elements.operation.listeners.change();
 elements.right.value = "0";
+elements.right.listeners.input();
+assert.strictEqual(elements.result.textContent, "");
 elements["calculator-form"].listeners.submit({ preventDefault() {} });
 
 assert.strictEqual(elements.error.hidden, false);
@@ -124,4 +149,4 @@ for (const id of [
   assert.strictEqual(elements[id].textContent, "", id + " retained stale output");
 }
 
-console.log("HERESY DOM adapter: arithmetic executes only after enterprise commit approval.");
+console.log("HERESY DOM adapter: staged edits invalidate reports; only commit executes arithmetic.");

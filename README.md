@@ -8,6 +8,8 @@ HERESY-API asks a deeply irresponsible question:
 
 The answer now comes in two forms: the Python **API Time Machine** and the browser-based **HERESY API Calculator**.
 
+**Live Pages site:** [https://qsolkcb.github.io/HERESY-API/](https://qsolkcb.github.io/HERESY-API/)
+
 ## HERESY API Calculator
 
 The calculator is a plain HTML/CSS/JavaScript static app under [`web/`](web/).
@@ -18,13 +20,13 @@ Open it locally with no server at all:
 web/index.html
 ```
 
-Or use the GitHub Pages deployment after PR #3 lands:
+Or launch the live GitHub Pages copy:
 
-```text
-https://qsolkcb.github.io/HERESY-API/
-```
+[**Launch the HERESY API Calculator**](https://qsolkcb.github.io/HERESY-API/)
 
 GitHub Pages is only the display case. The exact same files work directly from local disk.
+
+The form behaves like the enterprise governance artefact it pretends to be: editing operands, operation, or interface style only **stages** the request. Nothing executes until you press **COMMIT ENTERPRISE ARITHMETIC**.
 
 ### Calculator contract
 

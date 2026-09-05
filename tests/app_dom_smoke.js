@@ -67,15 +67,38 @@ global.document = documentStub;
 
 require("../web/app.js");
 
-assert.strictEqual(elements.result.textContent, "4");
-assert.strictEqual(elements.intent.textContent, "ADD 2 2");
+// Loading the app stages the defaults but does not execute arithmetic.
+assert.strictEqual(elements.result.textContent, "");
+assert.strictEqual(elements.intent.textContent, "");
+assert.strictEqual(elements.payload.textContent, "");
+assert.strictEqual(elements.error.hidden, true);
+
+for (const id of ["left", "right", "operation", "style"]) {
+  assert.strictEqual(elements[id].listeners.change, undefined, id + " unexpectedly recalculates on change");
+}
+
+// Changing staged input must not execute until the enterprise commit is submitted.
+elements.left.value = "9";
+elements.right.value = "4";
+elements.operation.value = "multiply";
+assert.strictEqual(elements.result.textContent, "");
+
+let prevented = false;
+elements["calculator-form"].listeners.submit({
+  preventDefault() {
+    prevented = true;
+  },
+});
+assert.strictEqual(prevented, true);
+assert.strictEqual(elements.result.textContent, "36");
+assert.strictEqual(elements.intent.textContent, "MUL 9 4");
 assert.ok(elements.payload.textContent.length > 0);
 assert.strictEqual(elements.error.hidden, true);
 
-// Force a failed calculation after a successful one.
+// Force a failed calculation after a successful one, again only through submit.
 elements.operation.value = "divide";
 elements.right.value = "0";
-elements.right.listeners.change();
+elements["calculator-form"].listeners.submit({ preventDefault() {} });
 
 assert.strictEqual(elements.error.hidden, false);
 assert.match(elements.error.textContent, /architecture committee/);
@@ -101,4 +124,4 @@ for (const id of [
   assert.strictEqual(elements[id].textContent, "", id + " retained stale output");
 }
 
-console.log("HERESY DOM adapter: failed calculations clear stale museum output.");
+console.log("HERESY DOM adapter: arithmetic executes only after enterprise commit approval.");

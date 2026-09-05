@@ -2,22 +2,22 @@
 
 The museum expands in deliberately sequenced acts of software heresy.
 
+## PR #1 — PROTOCOL MUSEUM
+
+**Status:** implemented and merged.
+
+Established the dependency-free museum, canonical `ADD 2 2` experiment, Ceremony Ratio, approximate token satire meter, curatorial constitution, historical/modern exhibits, API-key running gag, tests, and lean CI.
+
 ## PR #2 — API TIME MACHINE
 
-Turn the protocol museum into an interactive historical comparison engine for the same tiny intent.
+**Status:** implemented by PR #2.
 
-### Core idea
+Turn the protocol museum into a dynamic historical comparison engine for the same tiny semantic intent.
 
-Start with a microscopic operation such as:
+### Delivered contract
 
-```text
-ADD 2 2
-```
-
-Then send the same semantic intent through historical and modern interface styles so the user can watch the ceremony accumulate.
-
-### Planned exhibits
-
+- custom signed-32-bit operands while retaining canonical `ADD 2 2`
+- chronological punch-card through contemporary-agent timeline
 - punch-card / fixed-width representation
 - magnetic-tape / sequential record representation
 - raw TCP-style binary framing
@@ -27,21 +27,25 @@ Then send the same semantic intent through historical and modern interface style
 - CORBA / IDL bureaucracy theatre
 - SOAP-ish XML escalation
 - REST-ish HTTP + JSON
-- GraphQL-ish request envelopes
+- GraphQL-ish HTTP request envelope
 - contemporary agent/tool-call schema ceremony
+- filtering by stable style slug
+- compact timeline view
+- detailed curatorial dossier view
+- deterministic JSON output
 
-### Output
-
-For every exhibit, show at least:
+Every exhibit reports:
 
 - useful semantic intent
+- useful bytes
 - application payload bytes
+- ceremony bytes relative to useful intent
 - deliberately crude approximate token count
 - Ceremony Ratio
 - protocol-specific punchline
+- what the extra ceremony buys
 - honest engineering caveat
-
-The point is not to prove that old protocols are universally better. The point is to make every abstraction explain what value its extra ceremony purchased.
+- authentication status where applicable
 
 ### Running gag
 
@@ -52,6 +56,8 @@ provision -> store safely -> forget where -> search .env variants -> find somewh
 ```
 
 ## PR #3 — HERESY API CALCULATOR
+
+**Status:** next.
 
 Build an offline-first HTML/CSS/JavaScript joke calculator and publish the same static app through GitHub Pages.
 

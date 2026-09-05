@@ -35,6 +35,12 @@
     });
   }
 
+  function clearReport() {
+    Object.keys(fields).forEach(function (name) {
+      fields[name].textContent = "";
+    });
+  }
+
   function render(report) {
     fields.result.textContent = report.result;
     fields.intent.textContent = report.intent;
@@ -66,6 +72,7 @@
       );
       render(report);
     } catch (problem) {
+      clearReport();
       error.textContent = problem instanceof Error ? problem.message : String(problem);
       error.hidden = false;
     }

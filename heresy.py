@@ -58,13 +58,19 @@ API_KEY_LIFECYCLE = (
 
 @dataclass(frozen=True)
 class Intent:
-    """One microscopic arithmetic request."""
+    """One microscopic arithmetic request constrained to actual signed int32 values."""
 
     left: int = DEFAULT_LEFT
     right: int = DEFAULT_RIGHT
 
     def __post_init__(self) -> None:
         for name, value in (("left", self.left), ("right", self.right)):
+            # bool is an int subclass in Python, but it is not part of this wire contract.
+            # Requiring the exact built-in int type keeps text, JSON and binary exhibits aligned.
+            if type(value) is not int:
+                raise TypeError(
+                    f"{name} must be an int, not {type(value).__name__}"
+                )
             if not INT32_MIN <= value <= INT32_MAX:
                 raise ValueError(
                     f"{name} must fit a signed 32-bit integer "
@@ -152,13 +158,7 @@ def _binary_operands(intent: Intent) -> bytes:
 
 
 def build_exhibits(intent: Intent | None = None) -> tuple[Exhibit, ...]:
-    """Build the chronological API Time Machine for one semantic intent.
-
-    Payload sizes are application-level exhibit payloads. They intentionally do
-    not include IP, TCP, UDP, Ethernet, TLS, filesystem, or physical-media overhead.
-    Historical representations are illustrative and deterministic, not byte-for-byte
-    reconstructions of every implementation from an era.
-    """
+    """Build the chronological API Time Machine for one semantic intent."""
 
     intent = intent or Intent()
     text = intent.text
@@ -176,7 +176,6 @@ def build_exhibits(intent: Intent | None = None) -> tuple[Exhibit, ...]:
         "GIOP-ISH|IDL:heresy/Arithmetic:1.0|"
         f"operation=add|a={intent.left}|b={intent.right}|request_id=0042"
     ).encode("ascii")
-
     soap_ish = (
         '<?xml version="1.0"?>'
         '<soap:Envelope xmlns:soap="urn:soap">'
@@ -372,14 +371,18 @@ def build_exhibits(intent: Intent | None = None) -> tuple[Exhibit, ...]:
 def select_exhibits(
     exhibits: Sequence[Exhibit], styles: Sequence[str] | None
 ) -> tuple[Exhibit, ...]:
-    """Select requested style slugs while preserving chronological order."""
+    """Select requested style slugs while preserving chronological order.
 
-    if not styles or "all" in styles:
+    ``all`` is a sentinel, not a wildcard that suppresses validation: it must be
+    used alone so a typo in another repeated ``--style`` argument cannot disappear.
+    """
+
+    if not styles:
         return tuple(exhibits)
 
     requested = set(styles)
     known = {exhibit.slug for exhibit in exhibits}
-    unknown = sorted(requested - known)
+    unknown = sorted(requested - known - {"all"})
     if unknown:
         raise ValueError(
             "unknown style(s): "
@@ -387,6 +390,11 @@ def select_exhibits(
             + "; choose from: "
             + ", ".join(sorted(known))
         )
+    if "all" in requested:
+        if requested != {"all"}:
+            raise ValueError("style 'all' must be used alone")
+        return tuple(exhibits)
+
     return tuple(exhibit for exhibit in exhibits if exhibit.slug in requested)
 
 
@@ -561,7 +569,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     try:
         intent = Intent(args.left, args.right)
-    except ValueError as exc:
+    except (TypeError, ValueError) as exc:
         parser.error(str(exc))
 
     exhibits = build_exhibits(intent)

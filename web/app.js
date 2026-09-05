@@ -41,6 +41,12 @@
     });
   }
 
+  function invalidateStagedReport() {
+    clearReport();
+    error.hidden = true;
+    error.textContent = "";
+  }
+
   function render(report) {
     fields.result.textContent = report.result;
     fields.intent.textContent = report.intent;
@@ -81,6 +87,13 @@
   form.addEventListener("submit", function (event) {
     event.preventDefault();
     calculate();
+  });
+
+  ["left", "right"].forEach(function (id) {
+    document.getElementById(id).addEventListener("input", invalidateStagedReport);
+  });
+  ["operation", "style"].forEach(function (id) {
+    document.getElementById(id).addEventListener("change", invalidateStagedReport);
   });
 
   populateStyles();

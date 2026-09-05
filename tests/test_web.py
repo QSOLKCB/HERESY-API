@@ -47,6 +47,23 @@ class OfflineCalculatorTests(unittest.TestCase):
         self.assertIn('authenticationStatus: authenticated ? "401"', core)
         self.assertIn('remediation: authenticated ? "rewind tape"', core)
 
+    def test_initial_static_report_is_blank_before_javascript_or_commit(self) -> None:
+        index = (WEB / "index.html").read_text(encoding="utf-8")
+        for marker in (
+            '<strong id="result"></strong>',
+            '<strong id="intent"></strong>',
+            '<strong id="style-name"></strong>',
+            '<strong id="useful-bytes"></strong>',
+            '<strong id="payload-bytes"></strong>',
+            '<strong id="tokens"></strong>',
+            '<strong id="ceremony-ratio"></strong>',
+            '<span id="ceremony-bytes"></span>',
+            '<dd id="api-key-status"></dd>',
+            '<dd id="auth-status"></dd>',
+            '<dd id="remediation"></dd>',
+        ):
+            self.assertIn(marker, index)
+
     def test_readme_links_live_pages_calculator(self) -> None:
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         self.assertIn(PAGES_URL, readme)

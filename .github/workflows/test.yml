@@ -43,4 +43,6 @@ jobs:
           node --check web/heresy-core.js
           node --check web/app.js
           node --check tests/web_smoke.js
+          node --check tests/app_dom_smoke.js
           node tests/web_smoke.js
+          node tests/app_dom_smoke.js

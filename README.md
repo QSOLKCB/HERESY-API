@@ -6,11 +6,62 @@ HERESY-API asks a deeply irresponsible question:
 
 **What if modern API ceremony had to justify itself in a museum beside punch cards, magnetic tape, raw TCP frames, UDP datagrams, batch files, CORBA, SOAP, JSON, GraphQL, and agent tool schemas?**
 
-The answer is the **API Time Machine**.
+The answer now comes in two forms: the Python **API Time Machine** and the browser-based **HERESY API Calculator**.
+
+## HERESY API Calculator
+
+The calculator is a plain HTML/CSS/JavaScript static app under [`web/`](web/).
+
+Open it locally with no server at all:
+
+```text
+web/index.html
+```
+
+Or use the GitHub Pages deployment after PR #3 lands:
+
+```text
+https://qsolkcb.github.io/HERESY-API/
+```
+
+GitHub Pages is only the display case. The exact same files work directly from local disk.
+
+### Calculator contract
+
+- no framework
+- no backend
+- no package install
+- no external API
+- no network dependency
+- no API key required, because Dave would lose it
+- signed 32-bit integer operands
+- add, subtract, multiply, and divide
+- exact fractional display for non-integral division
+- all eleven Time Machine interface styles
+- fake wire representation for the selected era
+- useful bytes, payload bytes, approximate tokens, ceremony bytes, and Ceremony Ratio
+- protocol-specific punchline
+- what the abstraction actually buys
+- honest engineering caveat
+- synthetic 401 authentication tragedy for modern modes
+
+Example conceptual output:
+
+```text
+Mathematics: 4
+Useful intent: ADD 2 2
+Useful bytes: 7
+Interface: Agent Tool Call
+API key status: FOUND IN .env.old.backup.final2
+Authentication status: 401
+Recommended remediation: rewind tape
+```
+
+The app uses only relative local assets. If the internet disappears, it retains enough functionality to continue insulting APIs.
 
 ## API Time Machine
 
-The default experiment remains magnificently difficult:
+The canonical command-line experiment remains magnificently difficult:
 
 ```text
 ADD 2 2
@@ -58,7 +109,7 @@ Produce machine-readable metadata about our joke about machine-readable metadata
 python3 heresy.py --left 10 --right -7 --style graphql --json
 ```
 
-The operands are intentionally restricted to signed 32-bit integers so the binary TCP/UDP exhibits remain deterministic and structurally comparable.
+The Python Time Machine operands are restricted to signed 32-bit integers so the binary TCP/UDP exhibits remain deterministic and structurally comparable.
 
 ## Current timeline
 
@@ -70,7 +121,7 @@ The operands are intentionally restricted to signed 32-bit integers so the binar
 | UDP-style Datagram | 1970s-1980s | The packet can simply leave. No architecture review calendar invite required. |
 | FTP / Batch File | 1970s-1990s | Real-time, if tomorrow morning counts as a latency target. |
 | RPC-ish Invocation | 1980s-1990s | The network is local until packet loss files an objection. |
-| CORBA / IDL Theatre | 1990s | The addition has been referred to the Object Request Broker. |
+| CORBA / IDL Theatre | 1990s | The arithmetic has been referred to the Object Request Broker. |
 | SOAP-ish XML | late 1990s-2000s | The integer has entered the XML cathedral and acquired a namespace. |
 | REST-ish HTTP + JSON | modern web | Human-readable bureaucracy. Dave has lost the API key again. |
 | GraphQL-ish HTTP | modern web | Ask precisely for what you need after introducing yourself to the syntax tree. |
@@ -78,15 +129,15 @@ The operands are intentionally restricted to signed 32-bit integers so the binar
 
 ## Ceremony Ratio
 
-For any Time Machine request:
+For any exhibit:
 
 ```text
 Ceremony Ratio = application payload bytes / useful semantic intent bytes
 ```
 
-For the canonical `ADD 2 2`, useful intent is seven ASCII bytes.
+For canonical `ADD 2 2`, useful intent is seven ASCII bytes.
 
-The approximate token meter remains deliberately crude:
+The approximate token meter is deliberately crude:
 
 ```text
 estimated tokens = ceil(application payload bytes / 4)
@@ -94,7 +145,7 @@ estimated tokens = ceil(application payload bytes / 4)
 
 It is a joke-meter, not a tokenizer, benchmark, protocol-efficiency paper, or invoice predictor.
 
-Network headers, TLS, Ethernet, filesystem overhead, physical-media overhead, server implementation cost, latency, reliability, maintenance, observability, governance, and all the other things capable of ruining a simple chart are intentionally outside this metric.
+Network headers outside the represented application payload, TLS, Ethernet, filesystem overhead, physical-media overhead, server implementation cost, latency, reliability, maintenance, observability, governance, and all the other things capable of ruining a simple chart are intentionally outside this metric.
 
 ## The Heresies
 
@@ -107,6 +158,7 @@ Network headers, TLS, Ethernet, filesystem overhead, physical-media overhead, se
 7. **An old mechanism can be unsuitable for modern production and still make a devastating comparison at a deliberately tiny scale.**
 8. **An API key stored safely is apparently indistinguishable from an API key lost forever.**
 9. **If an abstraction adds bytes, the Time Machine is allowed to ask what those bytes purchased.**
+10. **A calculator that needs the cloud to add two integers has volunteered as an exhibit.**
 
 ## Why the heretics occasionally have a point
 
@@ -138,7 +190,7 @@ For **MOVE THIS FILE OVER THERE**, a durable file can be wonderfully literal: in
 
 The CORBA stop is deliberately **GIOP-ish theatre**, not a byte-accurate packet capture. IDL is normally a build-time interface contract and is not resent on every call.
 
-That caveat is part of the joke's constitution: HERESY-API may exaggerate bureaucracy, but it does not get to falsify where the bureaucracy lives.
+HERESY-API may exaggerate bureaucracy, but it does not get to falsify where the bureaucracy lives.
 
 ## Modern authentication ceremony
 
@@ -171,25 +223,22 @@ For the technically annoying version of the joke:
 python3 heresy.py --old-school-defense
 ```
 
-This prints the narrow cases for TCP, UDP, and batch files together with the bill each one leaves on the table.
-
 ## Project sequence
 
 See [`ROADMAP.md`](ROADMAP.md).
 
 - **PR #1 — Protocol Museum:** foundation, curatorial rules, metrics, and first exhibits.
 - **PR #2 — API Time Machine:** dynamic operands, full historical timeline, filtering, detailed dossiers, engineering value/caveats, UDP, CORBA, and persistent API-key tragedy.
-- **PR #3 — HERESY API CALCULATOR:** offline-first plain HTML/CSS/JavaScript calculator distributed through GitHub Pages, with no backend and therefore no API key for Dave to lose.
-
-GitHub Pages will be the display case, not a runtime dependency.
+- **PR #3 — HERESY API Calculator:** offline-first HTML/CSS/JavaScript calculator, with GitHub Pages as a static distribution surface only.
 
 ## Run the tests
 
 ```bash
 python3 -m unittest discover -s tests -v
+node tests/web_smoke.js
 ```
 
-No runtime dependencies are required.
+No runtime dependencies are required by the project itself.
 
 ## Important lack of seriousness
 

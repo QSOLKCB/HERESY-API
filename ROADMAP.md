@@ -10,9 +10,9 @@ Established the dependency-free museum, canonical `ADD 2 2` experiment, Ceremony
 
 ## PR #2 — API TIME MACHINE
 
-**Status:** implemented by PR #2.
+**Status:** implemented and merged.
 
-Turn the protocol museum into a dynamic historical comparison engine for the same tiny semantic intent.
+Turned the protocol museum into a dynamic historical comparison engine for the same tiny semantic intent.
 
 ### Delivered contract
 
@@ -34,77 +34,50 @@ Turn the protocol museum into a dynamic historical comparison engine for the sam
 - detailed curatorial dossier view
 - deterministic JSON output
 
-Every exhibit reports:
+Every exhibit reports useful semantics, payload metrics, approximate token ceremony, Ceremony Ratio, a punchline, the value purchased by the abstraction, an engineering caveat, and authentication status where applicable.
 
-- useful semantic intent
-- useful bytes
-- application payload bytes
-- ceremony bytes relative to useful intent
-- deliberately crude approximate token count
-- Ceremony Ratio
-- protocol-specific punchline
-- what the extra ceremony buys
-- honest engineering caveat
-- authentication status where applicable
+## PR #3 — HERESY API CALCULATOR
+
+**Status:** implemented by PR #3.
+
+Build an offline-first HTML/CSS/JavaScript joke calculator and publish the exact same static app through GitHub Pages.
+
+### Delivered contract
+
+- plain HTML, CSS, and JavaScript under `web/`
+- no runtime framework
+- no backend
+- no package installation
+- no external API or network dependency
+- no API key required to run the calculator, because Dave would lose it
+- opens directly from `web/index.html` on local disk
+- deploys the same `web/` directory through GitHub Pages
+- deterministic signed-int32 operands
+- four basic operations: add, subtract, multiply, and divide
+- exact fractional display for non-integral division results
+- all eleven API Time Machine interface styles
+- fake wire representation for the selected style
+- useful bytes, payload bytes, approximate tokens, ceremony bytes, and Ceremony Ratio
+- protocol-specific punchline, engineering value, and caveat
+- synthetic lost-key / 401 gag for REST, GraphQL, and agent-tool modes
+- responsive desktop/mobile layout
+- executable JavaScript core regressions plus offline/static CI checks
 
 ### Running gag
 
-Modern authenticated modes retain the API-key lifecycle:
+Modern authenticated modes retain the lifecycle:
 
 ```text
 provision -> store safely -> forget where -> search .env variants -> find somewhere unsafe -> rotate -> 401 -> consider magnetic tape
 ```
 
-## PR #3 — HERESY API CALCULATOR
+The calculator itself needs no credential. The fake modern API exhibits are the only things irresponsible enough to entrust Dave with one.
 
-**Status:** next.
+### GitHub Pages invariant
 
-Build an offline-first HTML/CSS/JavaScript joke calculator and publish the same static app through GitHub Pages.
+GitHub Pages publishes exactly `web/` as a static artifact. It is a distribution surface, not a runtime dependency.
 
-### Hard requirements
-
-- plain HTML, CSS, and JavaScript
-- no runtime framework
-- no backend
-- no external API dependency
-- no API key required, because Dave would lose it
-- works when opened directly from local disk
-- works when served through GitHub Pages
-- deterministic calculations
-- responsive desktop/mobile layout
-
-### Joke interaction
-
-The user enters a tiny arithmetic operation, for example `2 + 2`, then selects an unnecessarily elaborate interface style.
-
-The calculator shows:
-
-1. the actual mathematical answer
-2. the useful semantic request
-3. the fake wire representation for the chosen era/style
-4. payload bytes
-5. approximate token ceremony
-6. Ceremony Ratio
-7. an era-specific punchline
-8. a modern-authentication failure gag where appropriate
-
-Example outcome:
-
-```text
-Mathematics: 4
-Useful intent: ADD 2 2
-Useful bytes: 7
-Enterprise ceremony: 487
-API key status: FOUND IN .env.old.backup.final2
-Authentication status: 401
-Recommended remediation: rewind tape
-```
-
-### GitHub Pages
-
-The Pages deployment should publish exactly the static offline-capable application. GitHub Pages is a distribution surface, not a runtime dependency.
-
-If the internet disappears after loading the repository, the calculator should still be able to insult APIs locally.
+If the internet disappears, opening `web/index.html` locally must still provide the same arithmetic, protocol payloads, metrics, and jokes.
 
 ## Later gallery wings
 

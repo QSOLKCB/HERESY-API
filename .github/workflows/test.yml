@@ -24,14 +24,14 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.13"
 
-      - name: Validate Time Machine
+      - name: Validate Time Machine and offline calculator
         run: |
           python -m compileall -q heresy.py tests
           python -m unittest discover -s tests -v
@@ -40,3 +40,9 @@ jobs:
           python heresy.py --left 17 --right -3 --style udp --json >/dev/null
           python heresy.py --list-styles >/dev/null
           python heresy.py --old-school-defense >/dev/null
+          node --check web/heresy-core.js
+          node --check web/app.js
+          node --check tests/web_smoke.js
+          node --check tests/app_dom_smoke.js
+          node tests/web_smoke.js
+          node tests/app_dom_smoke.js

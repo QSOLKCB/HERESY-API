@@ -83,10 +83,6 @@
     calculate();
   });
 
-  ["left", "right", "operation", "style"].forEach(function (id) {
-    document.getElementById(id).addEventListener("change", calculate);
-  });
-
   populateStyles();
-  calculate();
+  clearReport();
 })();

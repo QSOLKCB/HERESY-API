@@ -28,6 +28,7 @@ class OfflineCalculatorTests(unittest.TestCase):
 
     def test_ui_retains_required_joke_and_measurement_surfaces(self) -> None:
         index = (WEB / "index.html").read_text(encoding="utf-8")
+        core = (WEB / "heresy-core.js").read_text(encoding="utf-8")
         for marker in (
             'id="result"',
             'id="intent"',
@@ -39,9 +40,10 @@ class OfflineCalculatorTests(unittest.TestCase):
             'id="api-key-status"',
             'id="auth-status"',
             "NO API KEY FOR DAVE TO LOSE",
-            "rewind tape",
         ):
             self.assertIn(marker, index)
+        self.assertIn('authenticationStatus: authenticated ? "401"', core)
+        self.assertIn('remediation: authenticated ? "rewind tape"', core)
 
     def test_pages_workflow_publishes_only_static_web_directory(self) -> None:
         workflow = (ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")

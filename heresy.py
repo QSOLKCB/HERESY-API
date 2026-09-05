@@ -86,12 +86,15 @@ def build_exhibits() -> tuple[Exhibit, ...]:
         b'<a>2</a><b>2</b></Add></soap:Body></soap:Envelope>'
     )
 
+    rest_body = _json_bytes({"operation": "add", "arguments": {"a": 2, "b": 2}})
     rest_json = (
         b"POST /v1/arithmetic/add HTTP/1.1\r\n"
+        b"Host: example.invalid\r\n"
         b"Content-Type: application/json\r\n"
         b"Accept: application/json\r\n"
-        b"X-Request-ID: 0042\r\n\r\n"
-        + _json_bytes({"operation": "add", "arguments": {"a": 2, "b": 2}})
+        b"X-Request-ID: 0042\r\n"
+        + f"Content-Length: {len(rest_body)}\r\n\r\n".encode("ascii")
+        + rest_body
     )
 
     graphql_ish = _json_bytes(
@@ -212,7 +215,7 @@ def render_table(exhibits: Iterable[Exhibit]) -> str:
     ]
 
     widths = [
-        max(len(headings[index]), *(len(row[index]) for row in table_rows))
+        max([len(headings[index]), *(len(row[index]) for row in table_rows)])
         for index in range(len(headings))
     ]
 

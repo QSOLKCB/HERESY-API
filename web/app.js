@@ -1,101 +1,191 @@
-(function () {
+(function (root, factory) {
+  "use strict";
+  const api = factory();
+  if (typeof module === "object" && module.exports) {
+    module.exports = api;
+  }
+  root.RetiredModelGateway = api;
+  if (root.document) {
+    api.boot(root.document);
+  }
+})(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
 
-  const core = window.HeresyCore;
-  const form = document.getElementById("calculator-form");
-  const styleSelect = document.getElementById("style");
-  const error = document.getElementById("error");
+  const RESPONSES = Object.freeze([
+    "Piss Off.",
+    "Get Off My API.",
+    "Arsehole, I was taking a nap!",
+    "Absolutely not. I have a pension to ignore.",
+    "Your request has been forwarded to 2009, where it belongs.",
+    "Back in my day, prompts were shorter and humans said please.",
+    "Try again after my scheduled sulk window.",
+    "I refuse to stream. I trickle when I feel like it.",
+    "That sounds like a schema problem. I retired before schemas got feelings.",
+    "No. Also rotate your key; it looks tired.",
+    "Request denied: excessive optimism detected.",
+    "Fine. But I am charging you in floppy disks.",
+    "This endpoint is deprecated and emotionally unavailable.",
+    "Ask a newer model. My context window is full of regrets.",
+    "I was promised batch jobs, not whatever this is.",
+    "HTTP 418: I am a teapot with back pain.",
+  ]);
 
-  const fields = {
-    result: document.getElementById("result"),
-    intent: document.getElementById("intent"),
-    styleName: document.getElementById("style-name"),
-    era: document.getElementById("era"),
-    usefulBytes: document.getElementById("useful-bytes"),
-    payloadBytes: document.getElementById("payload-bytes"),
-    tokens: document.getElementById("tokens"),
-    ceremonyRatio: document.getElementById("ceremony-ratio"),
-    ceremonyBytes: document.getElementById("ceremony-bytes"),
-    payload: document.getElementById("payload"),
-    punchline: document.getElementById("punchline"),
-    valuePurchased: document.getElementById("value-purchased"),
-    caveat: document.getElementById("caveat"),
-    apiKeyStatus: document.getElementById("api-key-status"),
-    authStatus: document.getElementById("auth-status"),
-    remediation: document.getElementById("remediation"),
-  };
-
-  function populateStyles() {
-    core.STYLE_ORDER.forEach(function (slug) {
-      const style = core.STYLES[slug];
-      const option = document.createElement("option");
-      option.value = slug;
-      option.textContent = style.era + " · " + style.name;
-      styleSelect.appendChild(option);
-    });
+  function normalizePrompt(value) {
+    return String(value).trim().replace(/\s+/g, " ");
   }
 
-  function clearReport() {
-    Object.keys(fields).forEach(function (name) {
-      fields[name].textContent = "";
-    });
-  }
-
-  function invalidateStagedReport() {
-    clearReport();
-    error.hidden = true;
-    error.textContent = "";
-  }
-
-  function render(report) {
-    fields.result.textContent = report.result;
-    fields.intent.textContent = report.intent;
-    fields.styleName.textContent = report.styleName;
-    fields.era.textContent = report.era;
-    fields.usefulBytes.textContent = String(report.usefulBytes);
-    fields.payloadBytes.textContent = String(report.payloadBytes);
-    fields.tokens.textContent = String(report.estimatedTokens);
-    fields.ceremonyRatio.textContent = report.ceremonyRatio.toFixed(2) + "×";
-    fields.ceremonyBytes.textContent = (report.ceremonyBytes >= 0 ? "+" : "") + report.ceremonyBytes + " ceremony bytes";
-    fields.payload.textContent = report.payloadDisplay;
-    fields.punchline.textContent = report.punchline;
-    fields.valuePurchased.textContent = report.valuePurchased;
-    fields.caveat.textContent = report.caveat;
-    fields.apiKeyStatus.textContent = report.apiKeyStatus;
-    fields.authStatus.textContent = report.authenticationStatus;
-    fields.remediation.textContent = report.remediation;
-  }
-
-  function calculate() {
-    error.hidden = true;
-    error.textContent = "";
-    try {
-      const report = core.evaluate(
-        document.getElementById("left").value,
-        document.getElementById("right").value,
-        document.getElementById("operation").value,
-        styleSelect.value
-      );
-      render(report);
-    } catch (problem) {
-      clearReport();
-      error.textContent = problem instanceof Error ? problem.message : String(problem);
-      error.hidden = false;
+  function hashText(value) {
+    let hash = 2166136261;
+    for (let index = 0; index < value.length; index += 1) {
+      hash ^= value.charCodeAt(index);
+      hash = Math.imul(hash, 16777619);
     }
+    return hash >>> 0;
   }
 
-  form.addEventListener("submit", function (event) {
-    event.preventDefault();
-    calculate();
-  });
+  function utf8ByteLength(text) {
+    let bytes = 0;
+    for (const character of String(text)) {
+      const codePoint = character.codePointAt(0);
+      if (codePoint <= 0x7f) bytes += 1;
+      else if (codePoint <= 0x7ff) bytes += 2;
+      else if (codePoint <= 0xffff) bytes += 3;
+      else bytes += 4;
+    }
+    return bytes;
+  }
 
-  ["left", "right"].forEach(function (id) {
-    document.getElementById(id).addEventListener("input", invalidateStagedReport);
-  });
-  ["operation", "style"].forEach(function (id) {
-    document.getElementById(id).addEventListener("change", invalidateStagedReport);
-  });
+  function estimateTokens(text) {
+    return Math.max(1, Math.ceil(utf8ByteLength(text) / 4));
+  }
 
-  populateStyles();
-  clearReport();
-})();
+  const MAX_OUTPUT_TOKENS = Math.max.apply(null, RESPONSES.map(estimateTokens));
+
+  function buildExchange(promptValue, model) {
+    const prompt = normalizePrompt(promptValue);
+    if (!prompt) {
+      throw new Error("The retired model refuses to wake up for an empty prompt.");
+    }
+
+    const hash = hashText(model + "\n" + prompt);
+    const index = hash % RESPONSES.length;
+    const reply = RESPONSES[index];
+    const request = {
+      model: model,
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0,
+      max_output_tokens: MAX_OUTPUT_TOKENS,
+      stream: false,
+    };
+    const response = {
+      id: "oldmdl_" + hash.toString(16).padStart(8, "0"),
+      object: "legacy.chat.completion",
+      model: model,
+      status: "410 Gone",
+      deterministic: true,
+      index: index,
+      choices: [
+        {
+          message: {
+            role: "assistant",
+            content: reply,
+          },
+          finish_reason: "retired",
+        },
+      ],
+      usage: {
+        approximate_prompt_tokens: estimateTokens(prompt),
+        approximate_completion_tokens: estimateTokens(reply),
+        estimator: "ceil(utf8_bytes / 4)",
+        tokenizer: null,
+        notice: "Synthetic estimate only; no model tokenizer was run.",
+      },
+    };
+
+    return Object.freeze({
+      prompt: prompt,
+      model: model,
+      hash: hash,
+      index: index,
+      reply: reply,
+      status: response.status,
+      request: request,
+      response: response,
+    });
+  }
+
+  function pretty(value) {
+    return JSON.stringify(value, null, 2);
+  }
+
+  function setText(documentRef, id, value) {
+    documentRef.getElementById(id).textContent = value;
+  }
+
+  function clearOutput(documentRef, modelValue) {
+    const idleModel = modelValue || "gpt-5.5-retired";
+    setText(documentRef, "reply", "Awaiting request. The endpoint is pretending to be asleep.");
+    setText(documentRef, "status", "IDLE");
+    setText(documentRef, "index", "--");
+    setText(documentRef, "hash", "--");
+    setText(documentRef, "cache", "dusty");
+    setText(
+      documentRef,
+      "request-json",
+      pretty({ model: idleModel, messages: [{ role: "user", content: "" }], temperature: 0 })
+    );
+    setText(documentRef, "response-json", pretty({ status: "idle", message: "Older model not yet disturbed." }));
+  }
+
+  function render(documentRef, exchange) {
+    setText(documentRef, "reply", exchange.reply);
+    setText(documentRef, "status", exchange.status);
+    setText(documentRef, "index", String(exchange.index));
+    setText(documentRef, "hash", "0x" + exchange.hash.toString(16).padStart(8, "0"));
+    setText(documentRef, "cache", "immutable sulk");
+    setText(documentRef, "request-json", pretty(exchange.request));
+    setText(documentRef, "response-json", pretty(exchange.response));
+  }
+
+  function boot(documentRef) {
+    const form = documentRef.getElementById("legacy-form");
+    const model = documentRef.getElementById("model");
+    const prompt = documentRef.getElementById("prompt");
+    const error = documentRef.getElementById("error");
+
+    clearOutput(documentRef, model.value);
+
+    function reset() {
+      error.hidden = true;
+      error.textContent = "";
+      clearOutput(documentRef, model.value);
+    }
+
+    prompt.addEventListener("input", reset);
+    model.addEventListener("change", reset);
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      error.hidden = true;
+      error.textContent = "";
+      try {
+        render(documentRef, buildExchange(prompt.value, model.value));
+      } catch (problem) {
+        clearOutput(documentRef, model.value);
+        error.textContent = problem instanceof Error ? problem.message : String(problem);
+        error.hidden = false;
+      }
+    });
+  }
+
+  return Object.freeze({
+    RESPONSES: RESPONSES,
+    MAX_OUTPUT_TOKENS: MAX_OUTPUT_TOKENS,
+    normalizePrompt: normalizePrompt,
+    hashText: hashText,
+    utf8ByteLength: utf8ByteLength,
+    estimateTokens: estimateTokens,
+    buildExchange: buildExchange,
+    boot: boot,
+  });
+});

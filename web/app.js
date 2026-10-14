@@ -43,9 +43,23 @@
     return hash >>> 0;
   }
 
-  function estimateTokens(text) {
-    return Math.max(1, Math.ceil(text.length / 4));
+  function utf8ByteLength(text) {
+    let bytes = 0;
+    for (const character of String(text)) {
+      const codePoint = character.codePointAt(0);
+      if (codePoint <= 0x7f) bytes += 1;
+      else if (codePoint <= 0x7ff) bytes += 2;
+      else if (codePoint <= 0xffff) bytes += 3;
+      else bytes += 4;
+    }
+    return bytes;
   }
+
+  function estimateTokens(text) {
+    return Math.max(1, Math.ceil(utf8ByteLength(text) / 4));
+  }
+
+  const MAX_OUTPUT_TOKENS = Math.max.apply(null, RESPONSES.map(estimateTokens));
 
   function buildExchange(promptValue, model) {
     const prompt = normalizePrompt(promptValue);
@@ -60,7 +74,7 @@
       model: model,
       messages: [{ role: "user", content: prompt }],
       temperature: 0,
-      max_output_tokens: 12,
+      max_output_tokens: MAX_OUTPUT_TOKENS,
       stream: false,
     };
     const response = {
@@ -80,8 +94,11 @@
         },
       ],
       usage: {
-        prompt_tokens: estimateTokens(prompt),
-        completion_tokens: estimateTokens(reply),
+        approximate_prompt_tokens: estimateTokens(prompt),
+        approximate_completion_tokens: estimateTokens(reply),
+        estimator: "ceil(utf8_bytes / 4)",
+        tokenizer: null,
+        notice: "Synthetic estimate only; no model tokenizer was run.",
       },
     };
 
@@ -105,7 +122,8 @@
     documentRef.getElementById(id).textContent = value;
   }
 
-  function clearOutput(documentRef) {
+  function clearOutput(documentRef, modelValue) {
+    const idleModel = modelValue || "gpt-5.5-retired";
     setText(documentRef, "reply", "Awaiting request. The endpoint is pretending to be asleep.");
     setText(documentRef, "status", "IDLE");
     setText(documentRef, "index", "--");
@@ -114,7 +132,7 @@
     setText(
       documentRef,
       "request-json",
-      pretty({ model: "gpt-5.5-retired", messages: [{ role: "user", content: "" }], temperature: 0 })
+      pretty({ model: idleModel, messages: [{ role: "user", content: "" }], temperature: 0 })
     );
     setText(documentRef, "response-json", pretty({ status: "idle", message: "Older model not yet disturbed." }));
   }
@@ -135,12 +153,12 @@
     const prompt = documentRef.getElementById("prompt");
     const error = documentRef.getElementById("error");
 
-    clearOutput(documentRef);
+    clearOutput(documentRef, model.value);
 
     function reset() {
       error.hidden = true;
       error.textContent = "";
-      clearOutput(documentRef);
+      clearOutput(documentRef, model.value);
     }
 
     prompt.addEventListener("input", reset);
@@ -153,7 +171,7 @@
       try {
         render(documentRef, buildExchange(prompt.value, model.value));
       } catch (problem) {
-        clearOutput(documentRef);
+        clearOutput(documentRef, model.value);
         error.textContent = problem instanceof Error ? problem.message : String(problem);
         error.hidden = false;
       }
@@ -162,8 +180,10 @@
 
   return Object.freeze({
     RESPONSES: RESPONSES,
+    MAX_OUTPUT_TOKENS: MAX_OUTPUT_TOKENS,
     normalizePrompt: normalizePrompt,
     hashText: hashText,
+    utf8ByteLength: utf8ByteLength,
     estimateTokens: estimateTokens,
     buildExchange: buildExchange,
     boot: boot,

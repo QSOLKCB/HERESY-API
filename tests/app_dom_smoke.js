@@ -46,6 +46,7 @@ assert.match(elements.reply.textContent, /pretending to be asleep/);
 assert.strictEqual(elements.status.textContent, "IDLE");
 assert.strictEqual(elements.index.textContent, "--");
 assert.strictEqual(elements.error.hidden, true);
+assert.match(elements["request-json"].textContent, /"model": "gpt-5.5-retired"/);
 assert.ok(elements.prompt.listeners.input);
 assert.ok(elements.model.listeners.change);
 assert.ok(elements["legacy-form"].listeners.submit);
@@ -63,19 +64,28 @@ assert.strictEqual(elements.status.textContent, "410 Gone");
 assert.notStrictEqual(elements.index.textContent, "--");
 assert.match(elements.hash.textContent, /^0x[0-9a-f]{8}$/);
 assert.match(elements["response-json"].textContent, /"finish_reason": "retired"/);
+assert.match(elements["response-json"].textContent, /"approximate_completion_tokens"/);
+assert.match(elements["response-json"].textContent, /"Synthetic estimate only/);
 assert.strictEqual(elements.error.hidden, true);
 
 const committedReply = elements.reply.textContent;
+elements.model.value = "davinci-dusty";
+elements.model.listeners.change();
+assert.match(elements["request-json"].textContent, /"model": "davinci-dusty"/);
+assert.strictEqual(elements.status.textContent, "IDLE");
+
 elements.prompt.value = "Wake up, old model. Please?";
 elements.prompt.listeners.input();
 assert.notStrictEqual(elements.reply.textContent, committedReply);
 assert.match(elements.reply.textContent, /pretending to be asleep/);
 assert.strictEqual(elements.status.textContent, "IDLE");
+assert.match(elements["request-json"].textContent, /"model": "davinci-dusty"/);
 
 elements.prompt.value = "";
 elements["legacy-form"].listeners.submit({ preventDefault() {} });
 assert.strictEqual(elements.error.hidden, false);
 assert.match(elements.error.textContent, /empty prompt/);
 assert.strictEqual(elements.status.textContent, "IDLE");
+assert.match(elements["request-json"].textContent, /"model": "davinci-dusty"/);
 
 console.log("HERESY DOM adapter: submit wakes the retired endpoint, input puts it back to sleep.");

@@ -1,58 +1,44 @@
 "use strict";
 
 const assert = require("assert");
-const core = require("../web/heresy-core.js");
+const gateway = require("../web/app.js");
 
-assert.strictEqual(core.STYLE_ORDER.length, 11);
-assert.deepStrictEqual(Object.keys(core.OPERATIONS), ["add", "subtract", "multiply", "divide"]);
+assert.strictEqual(gateway.RESPONSES.length, 16);
+assert.ok(gateway.RESPONSES.includes("Piss Off."));
+assert.ok(gateway.RESPONSES.includes("Get Off My API."));
+assert.ok(gateway.RESPONSES.includes("Arsehole, I was taking a nap!"));
 
-const punch = core.evaluate("2", "2", "add", "punch-card");
-assert.strictEqual(punch.result, "4");
-assert.strictEqual(punch.intent, "ADD 2 2");
-assert.strictEqual(punch.usefulBytes, 7);
-assert.strictEqual(punch.payloadBytes, 80);
+assert.strictEqual(gateway.normalizePrompt("  hello\n\nold   friend  "), "hello old friend");
+assert.strictEqual(gateway.estimateTokens("abcd"), 1);
+assert.strictEqual(gateway.estimateTokens("abcde"), 2);
 
-const udp = core.evaluate("2", "2", "add", "udp");
-const tcp = core.evaluate("2", "2", "add", "raw-tcp");
-assert.strictEqual(udp.payloadBytes, 9);
-assert.strictEqual(tcp.payloadBytes, 11);
-assert.ok(udp.payloadDisplay.startsWith("hex:01"));
-assert.ok(tcp.payloadDisplay.startsWith("hex:0009"));
+const first = gateway.buildExchange("Can you still hear me?", "gpt-5.5-retired");
+const second = gateway.buildExchange("Can   you still hear me?  ", "gpt-5.5-retired");
+assert.deepStrictEqual(first, second);
+assert.strictEqual(first.status, "410 Gone");
+assert.strictEqual(first.response.deterministic, true);
+assert.strictEqual(first.response.choices[0].message.content, first.reply);
+assert.strictEqual(first.request.temperature, 0);
+assert.strictEqual(first.request.stream, false);
 
-const rest = core.evaluate("17", "-3", "subtract", "rest");
-assert.strictEqual(rest.result, "20");
-assert.strictEqual(rest.authenticationStatus, "401");
-assert.strictEqual(rest.apiKeyStatus, "FOUND IN .env.old.backup.final2");
-assert.ok(rest.payloadDisplay.includes("X-API-Key: LOST-IN-.env.old.backup.final2"));
+const otherModel = gateway.buildExchange("Can you still hear me?", "davinci-dusty");
+assert.notStrictEqual(first.response.id, otherModel.response.id);
 
-const agent = core.evaluate("2147483647", "-2147483648", "add", "agent-tool");
-const agentPayload = JSON.parse(agent.payloadDisplay);
-for (const name of ["a", "b"]) {
-  assert.strictEqual(agentPayload.tool.input_schema.properties[name].minimum, -2147483648);
-  assert.strictEqual(agentPayload.tool.input_schema.properties[name].maximum, 2147483647);
+for (const prompt of [
+  "write me a business plan",
+  "summarise this please",
+  "what is the meaning of deterministic grumpiness",
+  "ship the API",
+]) {
+  const a = gateway.buildExchange(prompt, "gpt-5.5-retired");
+  const b = gateway.buildExchange(prompt, "gpt-5.5-retired");
+  assert.deepStrictEqual(a, b);
+  assert.ok(Number.isInteger(a.index));
+  assert.ok(a.index >= 0);
+  assert.ok(a.index < gateway.RESPONSES.length);
+  assert.ok(gateway.RESPONSES.includes(a.reply));
 }
 
-assert.strictEqual(core.evaluate("6", "3", "divide", "rpc").result, "2");
-assert.strictEqual(core.evaluate("1", "3", "divide", "rpc").result, "1/3");
-assert.strictEqual(core.evaluate("2", "4", "divide", "rpc").result, "1/2");
-assert.strictEqual(core.evaluate("-2", "4", "divide", "rpc").result, "-1/2");
-assert.strictEqual(core.evaluate("2", "-4", "divide", "rpc").result, "-1/2");
-assert.strictEqual(core.evaluate("-2", "-4", "divide", "rpc").result, "1/2");
-assert.strictEqual(core.evaluate("6", "-4", "divide", "rpc").result, "-3/2");
-assert.strictEqual(core.evaluate("-1", "-3", "divide", "rpc").result, "1/3");
-assert.throws(() => core.evaluate("1", "0", "divide", "rpc"), /architecture committee/);
-assert.throws(() => core.parseInt32("2147483648", "operand"), /between/);
-assert.throws(() => core.parseInt32("3.14", "operand"), /whole/);
+assert.throws(() => gateway.buildExchange("   ", "gpt-5.5-retired"), /empty prompt/);
 
-for (const style of core.STYLE_ORDER) {
-  const first = core.evaluate("9", "4", "multiply", style);
-  const second = core.evaluate("9", "4", "multiply", style);
-  assert.deepStrictEqual(first, second);
-  assert.ok(first.payloadBytes > 0);
-  assert.ok(first.estimatedTokens > 0);
-  assert.ok(first.punchline.length > 0);
-  assert.ok(first.valuePurchased.length > 0);
-  assert.ok(first.caveat.length > 0);
-}
-
-console.log("HERESY web core: deterministic, offline, and still needlessly ceremonial.");
+console.log("HERESY retired model gateway: deterministic, offline, and grumpy.");
